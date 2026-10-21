@@ -35,7 +35,10 @@ tmux -L test-dev-env -f templates/tmux/tmux.conf new-session -d -s test_sess \; 
 ## 📋 Pull Request Guidelines
 
 1. Fork the repository and create a topic branch from `main`.
-2. Keep changes focused and document any new keybindings in [`README.md`](README.md) and [`WALKTHROUGH.md`](WALKTHROUGH.md).
+2. **Documentation & Training Sync (Required)**: Every feature, tool, keybinding, or installer change **must** be reflected in:
+   - [`README.md`](README.md) — Update installation instructions, file maps, and keyboard reference tables.
+   - [`TUTORIAL.md`](TUTORIAL.md) — Add training material explaining what the new feature/tool does, why it improves productivity, and how to use it.
+   - [`WALKTHROUGH.md`](WALKTHROUGH.md) — Update the quick post-install tour if applicable.
 3. If your change alters how components interact (`bash`, `starship`, `tmux`, `nvim`, or `agy`), update [`ARCHITECTURE.md`](ARCHITECTURE.md).
 4. Add an entry under `[Unreleased]` in [`CHANGELOG.md`](CHANGELOG.md).
 5. Ensure new scripts include the standard Apache 2.0 `SPDX-License-Identifier: Apache-2.0` header.
