@@ -1,0 +1,84 @@
+# =============================================================================
+# ~/.bash_profile — Gino's Super Dev Env
+# =============================================================================
+# Sourced by login shells. Loads ~/.bashrc, ~/.alias, and untracked ~/.secrets.
+# =============================================================================
+
+# 1. Load interactive bash settings (Starship, fzf, history, EDITOR)
+if [ -f "$HOME/.bashrc" ]; then
+    . "$HOME/.bashrc"
+fi
+
+# 2. Load command aliases & helper functions
+if [ -f "$HOME/.alias" ]; then
+    . "$HOME/.alias"
+fi
+
+# 3. Load private tokens & secrets from untracked ~/.secrets (chmod 600)
+#    Put HOMEBREW_GITHUB_API_TOKEN or other API keys in ~/.secrets
+if [ -f "$HOME/.secrets" ]; then
+    . "$HOME/.secrets"
+fi
+
+# 4. iTerm2 Shell Integration (if installed)
+test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash" || true
+
+# 5. Homebrew & Bash Completion (supports both Intel /usr/local and Apple Silicon /opt/homebrew)
+if type brew &>/dev/null; then
+    HOMEBREW_PREFIX="$(brew --prefix)"
+    if [[ -r "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh" ]]; then
+        source "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh"
+    else
+        for COMPLETION in "${HOMEBREW_PREFIX}/etc/bash_completion.d/"*; do
+            [[ -r "${COMPLETION}" ]] && source "${COMPLETION}"
+        done
+    fi
+fi
+
+# 6. Google Cloud SDK (GCP CLI) setup
+#    Customize path if google-cloud-sdk is installed in a non-standard location
+for GCLOUD_SDK_DIR in "/usr/local/share/google-cloud-sdk" "/opt/homebrew/share/google-cloud-sdk" "$HOME/google-cloud-sdk"; do
+    if [ -d "$GCLOUD_SDK_DIR" ]; then
+        [ -f "$GCLOUD_SDK_DIR/path.bash.inc" ] && source "$GCLOUD_SDK_DIR/path.bash.inc"
+        [ -f "$GCLOUD_SDK_DIR/completion.bash.inc" ] && source "$GCLOUD_SDK_DIR/completion.bash.inc"
+        export PATH="$PATH:$GCLOUD_SDK_DIR/bin"
+        break
+    fi
+done
+
+# 7. pip bash completion
+_pip_completion() {
+    COMPREPLY=( $( COMP_WORDS="${COMP_WORDS[*]}" \
+                   COMP_CWORD=$COMP_CWORD \
+                   PIP_AUTO_COMPLETE=1 $1 ) )
+}
+complete -o default -F _pip_completion pip
+
+# 8. Optional language version managers (uncomment if needed)
+# eval "$(jenv init -)"
+# eval "$(pyenv init -)"
+
+# 9. Vi keybindings on the command line
+set -o vi
+
+# 10. User PATH configuration
+#     Add custom local bin directories here
+export PATH=".:$HOME/bin:/usr/local/sbin:$HOME/.dotnet/tools:$PATH"
+
+# 11. Optional Multiplexer Startup Prompt (configured by install.sh: tmux | screen | none)
+MULTIPLEXER_MODE="{{MULTIPLEXER_PROMPT}}"
+if [[ $- == *i* ]] && [ -z "${TMUX:-}" ] && [ "$TERM" != "screen.xterm-256color" ] && [ "$TERM" != "dumb" ]; then
+    if [ "$MULTIPLEXER_MODE" = "tmux" ] && command -v tmux >/dev/null 2>&1; then
+        read -t 5 -p "Start tmux? (y/N) " ans || true
+        ans=$(echo "${ans:-}" | tr '[:upper:]' '[:lower:]')
+        if [[ "$ans" = "y" || "$ans" = "yes" ]]; then
+            tmux new-session -A -s main
+        fi
+    elif [ "$MULTIPLEXER_MODE" = "screen" ] && command -v screen >/dev/null 2>&1; then
+        read -t 5 -p "Start screen? (y/N) " ans || true
+        ans=$(echo "${ans:-}" | tr '[:upper:]' '[:lower:]')
+        if [[ "$ans" = "y" || "$ans" = "yes" ]]; then
+            screen -D -RR
+        fi
+    fi
+fi

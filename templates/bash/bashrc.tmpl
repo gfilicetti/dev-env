@@ -1,0 +1,56 @@
+# =============================================================================
+# ~/.bashrc — Gino's Super Dev Env
+# =============================================================================
+# Sourced by interactive non-login shells (including new tmux panes/windows).
+# Configures Neovim as default editor, 100k deduplicated history, fzf, & Starship.
+# =============================================================================
+
+# 1. Source system-wide definitions
+if [ -f /etc/bashrc ]; then
+    . /etc/bashrc
+fi
+
+# 2. Default Editor (Neovim) & User PATH
+export EDITOR=nvim
+export VISUAL=nvim
+export PATH="$HOME/bin:/usr/local/bin:$PATH"
+
+# 3. Load command aliases & functions if not already loaded
+if [ -f "$HOME/.alias" ]; then
+    . "$HOME/.alias"
+fi
+
+# 4. Load private secrets (if present)
+if [ -f "$HOME/.secrets" ]; then
+    . "$HOME/.secrets"
+fi
+
+# 5. High-capacity deduplicated command history (powers fzf Ctrl-R fuzzy search)
+export HISTSIZE=50000
+export HISTFILESIZE=100000
+export HISTCONTROL=ignoreboth:erasedups
+shopt -s histappend
+
+# 6. Vi command-line editing mode (paired with ~/.inputrc for [I]/[N] indicator)
+set -o vi
+
+# 7. Fallback PS1 (used only if starship is not installed)
+export PS1='\u@\h:\w> '
+
+# 8. Interactive Enhancements: fzf (Ctrl-R history, Ctrl-T files) & Starship Prompt
+if [[ $- == *i* ]]; then
+    if command -v fzf >/dev/null 2>&1; then
+        eval "$(fzf --bash)"
+        # Also bind '/' in bash vi-command mode to trigger fzf history search
+        bind -m vi-command '"/": "\C-r"'
+    fi
+
+    if command -v starship >/dev/null 2>&1; then
+        eval "$(starship init bash)"
+    fi
+fi
+
+# 9. Optional machine-local overrides (untracked)
+if [ -f "$HOME/.bashrc.local" ]; then
+    . "$HOME/.bashrc.local"
+fi

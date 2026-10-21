@@ -1,0 +1,38 @@
+# =============================================================================
+# ~/.inputrc — GNU Readline Configuration (Bash 5.x Vi Mode)
+# =============================================================================
+# Provides live [I] / [N] mode indicator in the prompt and switches cursor
+# shape between a thin bar (Insert mode) and a solid block (Normal mode).
+# =============================================================================
+
+set editing-mode vi
+set show-mode-in-prompt on
+
+# Fast <Esc> key transitions (25ms instead of default 500ms)
+set keyseq-timeout 25
+
+# Prompt mode badge + DECSCUSR cursor shape escape sequences:
+#   Insert mode  -> Green [I] + blinking/steady bar cursor (\e[6 q)
+#   Command mode -> Cyan  [N] + solid block cursor (\e[2 q)
+set vi-ins-mode-string \1\e[32m\2[I]\1\e[0m\e[6 q\2 
+set vi-cmd-mode-string \1\e[36;1m\2[N]\1\e[0m\e[2 q\2 
+
+# Smarter, case-insensitive tab completion with colorized file types
+set completion-ignore-case on
+set show-all-if-ambiguous on
+set mark-symlinked-directories on
+set colored-stats on
+set visible-stats on
+
+# Prefix-filtered history navigation on Up/Down arrows in both vi modes
+$if mode=vi
+    set keymap vi-command
+    "\e[A": history-search-backward
+    "\e[B": history-search-forward
+    j: history-search-forward
+    k: history-search-backward
+
+    set keymap vi-insert
+    "\e[A": history-search-backward
+    "\e[B": history-search-forward
+$endif

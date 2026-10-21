@@ -1,0 +1,69 @@
+# =============================================================================
+# ~/.alias — Gino's Super Dev Env
+# =============================================================================
+# Portable shell aliases & functions. Sourced by ~/.bash_profile and ~/.bashrc.
+# Add machine-specific aliases to ~/.bashrc.local to keep this file clean.
+# =============================================================================
+
+# --- Disk, File & Editor Shortcuts -------------------------------------------
+alias ducks="du -cks * | sort -rn | head -11"
+alias edit='$EDITOR'
+alias edal='$EDITOR ~/.alias'          # Edit ~/.alias
+alias srcal='. ~/.alias'               # Reload ~/.alias
+alias edsh='$EDITOR ~/.bashrc'         # Edit ~/.bashrc
+alias srcsh='. ~/.bashrc'              # Reload ~/.bashrc
+alias ednv='$EDITOR ~/.config/nvim/init.lua'
+alias edtm='$EDITOR ~/.tmux.conf'
+alias c="clear"                        # Clear the screen
+alias ren="mv -i"                      # Rename with overwrite confirmation
+alias cz="unzip -l"                    # List zip archive contents
+alias m="less"
+alias md="mkdir"
+alias rd="rmdir"
+alias l="ls -Flh"
+alias nc="netcat"
+alias macvim="mvim"
+alias whatsmyip="curl -s 'https://api.ipify.org?format=json' | jq -r .ip"
+alias python="python3"
+alias pip="pip3"
+
+# --- Antigravity Dev Environment Shortcuts -----------------------------------
+alias tdev="ade"                       # Launch tmux + nvim + agy IDE layout
+
+# --- Cloud & Kubernetes Shortcuts --------------------------------------------
+alias gc="gcloud"
+alias mk="minikube"
+if [ -f "$HOME/.alias_kubectl" ]; then
+    source "$HOME/.alias_kubectl"
+fi
+
+# --- Git Shortcuts -----------------------------------------------------------
+alias g="git"
+alias gl="git pull"
+alias gp="git push"
+alias gf="git fetch --prune"
+alias gs="git status"
+alias gmm="git merge master"
+
+# --- System & Maintenance Shortcuts ------------------------------------------
+# Customize backup script path in ~/.bashrc.local if needed:
+alias rback='sudo cat /dev/null && osascript "$HOME/applescript/rsync.applescript"'
+alias gn="geeknote"
+alias update="sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup; brew doctor"
+
+# --- Helper Functions --------------------------------------------------------
+
+# Open passed-in directory in Path Finder (macOS)
+pf() {
+    open -a "Path Finder.app" "$1"
+}
+
+# Spell-check word(s) using aspell
+checkword() {
+    echo "$@" | aspell -a | sed -n -e '/^\&/p' -e '/^\#/p'
+}
+
+# Create a directory and immediately cd into it
+mkcd() {
+    mkdir -p "$*" && cd "$*"
+}

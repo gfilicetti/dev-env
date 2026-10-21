@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+# =============================================================================
+# ade — Antigravity Dev Environment Launcher (Part of Gino's Super Dev Env)
+# =============================================================================
+# Usage:
+#   ade                 # Launch/attach in current directory
+#   ade /path/to/repo   # Launch/attach in target repository directory
+#   ade -p              # Launch in popup-only mode (full-screen nvim, Ctrl-a g for agy)
+#
+# Layout (Default):
+#   Window 0 (code):  Left pane (62%) = Neovim 0.12 | Right pane (38%) = Antigravity CLI (agy)
+#   Window 1 (shell): Full-screen Bash 5.3 + Starship shell for git/build/test
+# =============================================================================
+
+set -euo pipefail
+
+POPUP_MODE=false
+TARGET_DIR=""
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -p|--popup-only)
+            POPUP_MODE=true
+            shift
+            ;;
+        -h|--help)
+            sed -n '2,13p' "$0" | sed 's/^# \{0,1\}//'
+            exit 0
+            ;;
+        *)
+            TARGET_DIR="$1"
+            shift
+            ;;
+    esac
+done
+
+TARGET_DIR="${TARGET_DIR:-$(pwd)}"
+if [[ ! -d "$TARGET_DIR" ]]; then
+    echo "Error: Directory '$TARGET_DIR' does not exist." >&2
+    exit 1
+fi
+
+TARGET_DIR="$(cd "$TARGET_DIR" && pwd)"
+REPO_NAME="$(basename "$TARGET_DIR" | tr '.: ' '---')"
+SESSION_NAME="dev-${REPO_NAME}"
+
+# If the session already exists, attach or switch to it
+if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
+    if [[ -n "${TMUX:-}" ]]; then
+        exec tmux switch-client -t "$SESSION_NAME"
+    else
+        exec tmux attach-session -t "$SESSION_NAME"
+    fi
+fi
+
+# Create Window 0: 'code' running Neovim
+tmux new-session -d -s "$SESSION_NAME" -n "code" -c "$TARGET_DIR"
+
+if [[ "$POPUP_MODE" == "false" ]]; then
+    # Split right pane (38% width) for Antigravity CLI (agy)
+    tmux split-window -h -l 38% -t "${SESSION_NAME}:0" -c "$TARGET_DIR" "agy"
+    # Focus left pane (0.0) and start Neovim
+    tmux send-keys -t "${SESSION_NAME}:0.0" "nvim" C-m
+else
+    tmux send-keys -t "${SESSION_NAME}:0.0" "nvim" C-m
+fi
+
+# Create Window 1: 'shell' for manual CLI commands (reachable via Ctrl-a Ctrl-a or Ctrl-a 1)
+tmux new-window -t "${SESSION_NAME}:1" -n "shell" -c "$TARGET_DIR"
+
+# Start focused on Window 0, Pane 0 (Neovim)
+tmux select-window -t "${SESSION_NAME}:0"
+tmux select-pane -t "${SESSION_NAME}:0.0"
+
+if [[ -n "${TMUX:-}" ]]; then
+    exec tmux switch-client -t "$SESSION_NAME"
+else
+    exec tmux attach-session -t "$SESSION_NAME"
+fi

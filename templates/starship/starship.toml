@@ -1,0 +1,119 @@
+# =============================================================================
+# ~/.config/starship.toml — Gino's Super Dev Env Two-Line Developer Prompt
+# =============================================================================
+# Designed for Bash 5.3 + tmux splits + SauceCodePro Nerd Font.
+#
+# Top line:
+#   [user@host (SSH only)] [repo/dir] [git branch + status] [language/venv] [duration] [jobs]
+# Bottom line:
+#   [I]/[N] (from Readline ~/.inputrc) + ❯ (green on success, red with exit code on failure)
+# =============================================================================
+
+format = """
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_status\
+$python\
+$nodejs\
+$golang\
+$rust\
+$java\
+$docker_context\
+$cmd_duration\
+$jobs\
+$line_break\
+$status\
+$character"""
+
+add_newline = true
+command_timeout = 1000
+
+# Only show username@host when connected via SSH or running as root
+# (Local hostname is already displayed in the tmux status bar)
+[username]
+style_user = "bold yellow"
+style_root = "bold red"
+format = "[$user]($style)"
+show_always = false
+
+[hostname]
+ssh_only = true
+format = "[@$hostname](bold yellow) "
+
+# Smart Git-aware directory path
+[directory]
+style = "bold cyan"
+truncation_length = 4
+truncate_to_repo = true
+read_only = " 󰌾"
+
+# Git branch & working tree status
+[git_branch]
+symbol = " "
+style = "bold purple"
+
+[git_status]
+style = "bold yellow"
+format = '([\[$all_status$ahead_behind\]]($style) )'
+conflicted = "=${count}"
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+untracked = "?${count}"
+stashed = "$${count}"
+modified = "!${count}"
+staged = "+${count}"
+renamed = "»${count}"
+deleted = "✘${count}"
+
+# Contextual language & runtime badges (shown only inside matching projects)
+[python]
+symbol = " "
+style = "yellow"
+format = 'via [${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
+
+[nodejs]
+symbol = " "
+format = "via [$symbol($version )]($style)"
+
+[golang]
+symbol = " "
+format = "via [$symbol($version )]($style)"
+
+[rust]
+symbol = " "
+format = "via [$symbol($version )]($style)"
+
+[java]
+symbol = " "
+format = "via [$symbol($version )]($style)"
+
+[docker_context]
+symbol = " "
+format = "via [$symbol$context]($style) "
+
+# Execution timer for commands taking longer than 2 seconds
+[cmd_duration]
+min_time = 2_000
+style = "bold yellow"
+format = "took [$duration]($style) "
+
+# Active background jobs counter
+[jobs]
+symbol = "✦"
+style = "bold blue"
+number_threshold = 1
+
+# Non-zero exit code badge
+[status]
+disabled = false
+style = "bold red"
+symbol = "✘ "
+format = '[$symbol$status]($style) '
+
+# Prompt character (turns red if previous command failed)
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"

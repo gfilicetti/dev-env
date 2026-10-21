@@ -1,0 +1,69 @@
+" =============================================================================
+" ~/.vimrc — Classic Vim Configuration (Part of Gino's Super Dev Env)
+" =============================================================================
+" Kept for classic vim/vi compatibility alongside ~/.config/nvim/init.lua.
+" =============================================================================
+
+source $VIMRUNTIME/macros/matchit.vim
+set shiftwidth=4
+set tabstop=4
+set title
+set dir=/tmp
+set number
+
+if v:progname =~? "evim"
+  finish
+endif
+
+set nocompatible
+set backspace=indent,eol,start
+
+if has("vms")
+  set nobackup
+else
+  set writebackup
+endif
+set history=50
+set ruler
+set showcmd
+set incsearch
+
+" Don't use Ex mode, use Q for formatting
+map Q gq
+
+" CTRL-U in insert mode deletes a lot. Use CTRL-G u to first break undo
+inoremap <C-U> <C-G>u<C-U>
+
+" Keep mouse disabled so native terminal copy/paste works cleanly
+"if has('mouse')
+"  set mouse=a
+"endif
+
+if &t_Co > 2 || has("gui_running")
+  syntax on
+  set hlsearch
+endif
+
+if has("gui_running")
+  colorscheme wombat
+  set guifont=Source\ Code\ Pro:h13
+endif
+
+if has("autocmd")
+  filetype plugin indent on
+
+  augroup vimrcEx
+  au!
+  autocmd BufReadPost *
+    \ if line("'\"") > 1 && line("'\"") <= line("$") |
+    \   exe "normal! g`\"" |
+    \ endif
+  augroup END
+else
+  set autoindent
+endif
+
+if !exists(":DiffOrig")
+  command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
+		  \ | wincmd p | diffthis
+endif
