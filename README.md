@@ -328,6 +328,7 @@ dev-env/
 ├── TUTORIAL.md                            # Complete training guide & exercises for the new toolset
 ├── WALKTHROUGH.md                         # Step-by-step tour & verification checklist
 ├── ARCHITECTURE.md                        # Deep technical architecture & IPC details
+├── AGENTS.md                              # Persistent Antigravity workspace rules for dev-env
 ├── LICENSE                                # Apache License, Version 2.0
 ├── NOTICE                                 # Copyright & third-party attribution notices
 ├── CONTRIBUTING.md                        # Contribution & verification guidelines
