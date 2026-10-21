@@ -7,7 +7,8 @@ A fast, keyboard-driven command-line development environment for **macOS** (`arm
 Clone this repository onto any brand-new Mac or Linux computer and run `./install.sh` to bootstrap the entire stack in under a minute.
 
 > 📖 **Documentation Map**:
-> - **[`README.md`](README.md)** *(this file)* — Installation, hands-on walkthrough, and keyboard shortcut cheatsheets.
+> - **[`README.md`](README.md)** *(this file)* — Detailed installation guide, hands-on walkthrough, and keyboard shortcut cheatsheets.
+> - **[`TUTORIAL.md`](TUTORIAL.md)** — **Complete Toolset Training Course**: Deep-dive tutorial on every newly installed program (`bash 5+`, `starship`, `fzf`, `rg`, `fd`, `tmux`, `nvim 0.12+`, `agy` + `ade`, and `dev-copy`), why each feature boosts productivity, and hands-on exercises.
 > - **[`WALKTHROUGH.md`](WALKTHROUGH.md)** — Focused post-install tour and verification checklist.
 > - **[`ARCHITECTURE.md`](ARCHITECTURE.md)** — Deep technical implementation details (terminal escape sequences, Readline `\1...\2` prompt escapes, `tmux` TTY inspection, and the Neovim ➔ `agy` IPC bridge).
 
@@ -33,36 +34,152 @@ Clone this repository onto any brand-new Mac or Linux computer and run `./instal
 
 ---
 
-## 🚀 Quick Start & Installation (New Computer Bootstrap)
+## 🚀 Detailed Installation Guide (New Computer Bootstrap)
 
-### 1. Clone the Repository
+Whether you are setting up a brand-new MacBook, a Linux desktop workstation, or a remote cloud VM/container, the installation process is always two steps: **clone the repo** and **run `./install.sh`**.
+
+---
+
+### Prerequisites
+
+- **Operating System**:
+  - **macOS** 12+ (Apple Silicon `arm64` or Intel `x86_64`)
+  - **Linux** (`x86_64` / `amd64` or `arm64` / `aarch64`) — tested with Debian/Ubuntu (`apt`), Fedora/RHEL/Rocky (`dnf`/`yum`), Arch (`pacman`), Alpine (`apk`), and rootless Linux environments without `sudo`.
+- **Minimal Base Tools**:
+  - `git` and `curl` (plus `tar`).
+  - *On a brand-new Mac*: Running `git` in Terminal for the first time will automatically prompt macOS to install the Xcode Command Line Tools (`xcode-select --install`).
+  - *On a minimal Linux server*: Ensure `git` and `curl` are present (`sudo apt-get update && sudo apt-get install -y git curl` on Debian/Ubuntu).
+
+---
+
+### Step 1: Clone the Repository
+
+Clone `dev-env` into `~/Repositories/dev-env` (or any directory you prefer):
 
 ```bash
+mkdir -p ~/Repositories
+# Using SSH (if your SSH key is already registered with GitHub):
 git clone git@github.com:gfilicetti/dev-env.git ~/Repositories/dev-env
+
+# Or using HTTPS (works immediately on a fresh machine before setting up SSH keys):
+git clone https://github.com/gfilicetti/dev-env.git ~/Repositories/dev-env
+
 cd ~/Repositories/dev-env
 ```
 
-### 2. Run the Interactive Installer
+---
+
+### Step 2: Run the Interactive Installer (`./install.sh`)
 
 ```bash
 ./install.sh
 ```
 
-The interactive wizard will:
-1. Detect your OS (`macos` or `linux`), CPU architecture (`x86_64` or `arm64`), and package manager (`brew`, `apt`, `dnf`, `yum`, `pacman`, `apk`, or rootless `~/.local` fallback).
-2. Install/verify **Bash 5+**, **`tmux`**, **Neovim 0.12+**, **`starship`**, **`fzf`**, **`ripgrep` (`rg`)**, **`fd`**, and **`SauceCodePro Nerd Font`** (`~/Library/Fonts` on macOS or `~/.local/share/fonts` on Linux).
-3. Prompt for your **Antigravity GCP Project ID**, **Primary Workspace Directory**, **Optional GitHub Token** (saved strictly to untracked `~/.secrets` with `chmod 600`), and **Login Multiplexer Preference** (`tmux`, `screen`, or `none`).
-4. Back up all existing dotfiles to `~/.dev-env-backup/<YYYYMMDD-HHMMSS>/`.
-5. Render the scrubbed templates from `templates/` into `~` and `~/.config/`, install `~/bin/ade` and `~/bin/dev-copy`, offer to switch your default login shell to `bash` via `chsh` if needed, and bootstrap Neovim's plugins headlessly.
+When you run `./install.sh`, the interactive wizard walks you through **6 quick configuration questions** (each pre-filled with a smart default or auto-detected from your existing machine so you can simply press `Enter`):
 
-### Installer Flags
+| Prompt | Default | What It Configures |
+| :--- | :--- | :--- |
+| **1. Install/verify core packages & CLI tools?** | `Y` | Installs/verifies `bash` 5+, `tmux`, `neovim` 0.12+, `starship`, `fzf`, `ripgrep` (`rg`), `fd`, and `SauceCodePro Nerd Font`. |
+| **2. GCP Project ID for Antigravity CLI** | Auto-detected or `your-gcp-project-id` | Populates `gcp.project` in `~/.gemini/antigravity-cli/settings.json`. |
+| **3. GCP Location for Antigravity CLI** | `global` | Populates `gcp.location` in `~/.gemini/antigravity-cli/settings.json`. |
+| **4. Primary Repositories / Workspace directory** | `~/Repositories` | Adds your workspace root to `trustedWorkspaces` in `~/.gemini/antigravity-cli/settings.json`. |
+| **5. Login shell startup prompt in `.bash_profile`** | `tmux` | Controls whether new login shells offer a 5-second `Start tmux? (y/N)` prompt (`tmux`), `Start screen? (y/N)` (`screen`), or no prompt (`none`). |
+| **6. Optional GitHub Personal Access Token** | *(Hidden input / skip)* | If provided (or already present on disk), writes `HOMEBREW_GITHUB_API_TOKEN` exclusively to untracked `~/.secrets` with `chmod 600` permissions. |
+| **7. Configure iTerm2 profile font?** *(macOS only)* | `Y` | Updates `~/Library/Preferences/com.googlecode.iterm2.plist` so iTerm2 uses `SauceCodeProNF-SemiBold 14`. |
+
+---
+
+### Step 3: What `./install.sh` Does Under the Hood (macOS vs. Linux)
+
+#### On macOS (`arm64` & `x86_64`)
+1. **Homebrew Bootstrap**: Checks if `brew` is installed (`/opt/homebrew/bin/brew` or `/usr/local/bin/brew`). If missing on a brand-new Mac, offers to install Homebrew automatically.
+2. **Core Packages**: Ensures modern **Bash 5.x** (replacing macOS's ancient 2007 `/bin/bash` 3.2), **`tmux`**, **`git`**, **`curl`**, **`jq`**, and **`python3`** are installed via Homebrew.
+3. **Fast Prebuilt Binaries**: Downloads official prebuilt release binaries directly from GitHub Releases for **Neovim 0.12+** (`~/.local/nvim/bin/nvim` linked to `~/bin/nvim`), **`starship`**, **`fzf`**, **`ripgrep` (`rg`)**, and **`fd`**—avoiding slow source builds on newer macOS versions.
+4. **Nerd Font & iTerm2**: Installs **SauceCodePro Nerd Font** into `~/Library/Fonts` and configures your iTerm2 profile font to `SauceCodeProNF-SemiBold 14`.
+
+#### On Linux (`x86_64` & `arm64`/`aarch64`)
+1. **Hybrid Privilege Model (`sudo` + Rootless Fallback)**:
+   - **With `sudo`**: Detects `apt-get`, `dnf`, `yum`, `pacman`, or `apk` and installs `bash`, `bash-completion`, `tmux`, `git`, `curl`, `jq`, `tar`, `xz`, `unzip`, `fontconfig`, `xclip`, `wl-clipboard`, and `python3`.
+   - **Without `sudo` (Rootless / Shared Server)**: Automatically skips the system package manager and installs all CLI binaries into `~/.local/bin` and `~/bin` with zero root privileges required.
+2. **Official Prebuilt Neovim 0.12+**: Many Linux distros (such as Ubuntu/Debian `apt`) ship outdated Neovim `0.6`–`0.9` packages that lack modern Lua APIs. `./install.sh` automatically downloads the official `nvim-linux-{x86_64,arm64}.tar.gz` release into `~/.local/nvim` and links it to `~/bin/nvim` and `~/.local/bin/nvim`.
+3. **Static Prebuilt Rust Tools**: Downloads static `musl`/`gnu` Linux binaries for **`starship`**, **`fzf`**, **`ripgrep` (`rg`)**, and **`fd`**.
+4. **Fontconfig Integration**: Installs **SauceCodePro Nerd Font** into `~/.local/share/fonts` and runs `fc-cache -f` so GUI Linux terminals immediately recognize the glyphs.
+
+---
+
+### Step 4: Installed File Map & Automatic Backups
+
+Before modifying any file in your home directory, `./install.sh` creates a timestamped snapshot of your existing dotfiles in:
+```text
+~/.dev-env-backup/<YYYYMMDD-HHMMSS>/
+```
+
+It then installs the following files:
+
+| Destination Path in `$HOME` | Source in Repository | Purpose |
+| :--- | :--- | :--- |
+| `~/.bash_profile` | `templates/bash/bash_profile.tmpl` | Login shell startup, PATH, Homebrew/Linux completions, `gcloud` SDK, `~/.secrets` loader, optional `tmux` prompt. |
+| `~/.bashrc` | `templates/bash/bashrc.tmpl` | Interactive shell config: `EDITOR=nvim`, 100k deduplicated history, `set -o vi`, `fzf`, and Starship init. |
+| `~/.alias` | `templates/bash/alias.tmpl` | Portable Mac & Linux aliases (`tdev`, `clip`, `l`, `update`, `pf`, `ducks`, Git shortcuts). |
+| `~/.alias_kubectl` | `templates/bash/alias_kubectl` | Comprehensive `kubectl` shortcut aliases (`k`, `kgpo`, `klo`, etc.). |
+| `~/.inputrc` | `templates/bash/inputrc` | GNU Readline `vi`-mode `[I]`/`[N]` prompt badge, beam/block cursor shape switching, and prefix history search. |
+| `~/.secrets` *(chmod 600)* | `templates/bash/secrets.example` | Untracked private file for `HOMEBREW_GITHUB_API_TOKEN` and sensitive API keys. |
+| `~/.config/starship.toml` | `templates/starship/starship.toml` | Two-line developer prompt configuration. |
+| `~/.tmux.conf` | `templates/tmux/tmux.conf` | `tmux` 3.x+ config (`Ctrl-a` prefix, `dev-copy` clipboard, `Ctrl-h/j/k/l` navigation, `Ctrl-a g` `agy` popup). |
+| `~/.screenrc` | `templates/tmux/screenrc` | Classic GNU `screen` fallback configuration. |
+| `~/.config/nvim/init.lua` | `templates/nvim/init.lua` | Single-file Neovim 0.12+ config (Telescope, Gitsigns, Oil, Treesitter, and `agy` IPC bridge). |
+| `~/.vimrc` | `templates/nvim/vimrc` | Classic Vim fallback configuration. |
+| `~/.gemini/antigravity-cli/settings.json` | `templates/antigravity/settings.json.tmpl` | Antigravity CLI config (`editor: "nvim"`, `editorMode: "vim"`, GCP project, `trustedWorkspaces`). |
+| `~/bin/ade` | `bin/ade` | Launches the 2-window `tmux` + `nvim` + `agy` workspace (aliased to `tdev`). |
+| `~/bin/dev-copy` | `bin/dev-copy` | Universal clipboard helper supporting `pbcopy`, `wl-copy`, `xclip`/`xsel`, and SSH OSC 52 (aliased to `clip`). |
+
+---
+
+### Step 5: Terminal Font & Login Shell Finalization
+
+1. **Terminal Emulator Font**:
+   - **iTerm2 on macOS**: Automatically configured by `./install.sh` (`SauceCodeProNF-SemiBold 14`). Restart iTerm2 (or open a new window) after installing on a fresh machine for the font change to take effect.
+   - **Other Terminal Emulators** (macOS Terminal.app, Ghostty, WezTerm, Alacritty, Kitty, GNOME Terminal, or Windows Terminal when SSHing into a Linux box): Set your terminal profile font to **`SauceCodePro Nerd Font`** (size `13` or `14`) so Git branch (``) and file tree icons render cleanly.
+2. **Default Login Shell (`bash`)**:
+   - On macOS (where `/bin/zsh` is the factory default) or Linux machines defaulting to `/bin/sh`, `./install.sh` detects if `$SHELL` is not `bash` and offers to switch your login shell via `chsh -s`.
+   - You can also switch manually anytime:
+     ```bash
+     # macOS (Apple Silicon):
+     chsh -s /opt/homebrew/bin/bash
+     # macOS (Intel):
+     chsh -s /usr/local/bin/bash
+     # Linux:
+     chsh -s /bin/bash
+     ```
+3. **Reload Your Current Shell**:
+   ```bash
+   source ~/.bash_profile
+   ```
+
+---
+
+### Step 6: Installer Modes (Non-Interactive, Dry-Run & Rollback)
 
 ```bash
-./install.sh              # Interactive setup wizard
-./install.sh --defaults   # Non-interactive install using auto-detected/default values
-./install.sh --dry-run    # Preview all template renders and backups without touching disk
-./install.sh --uninstall  # Restore your dotfiles from the most recent ~/.dev-env-backup
+# 1. Interactive setup wizard (recommended for first run on a new computer)
+./install.sh
+
+# 2. Non-interactive install using auto-detected/default values (great for scripts/CI)
+./install.sh --defaults
+
+# 3. Preview all package checks, backups, and template renders without modifying disk
+./install.sh --dry-run
+
+# 4. Instant rollback: restore all dotfiles from the latest ~/.dev-env-backup/<timestamp>
+./install.sh --uninstall
 ```
+
+---
+
+## 🎓 New to the Toolset? Read [`TUTORIAL.md`](TUTORIAL.md)!
+
+Want to learn *why* each newly installed tool (`starship`, `fzf`, `ripgrep`, `fd`, `tmux`, `nvim 0.12+`, `agy`, and `dev-copy`) is so productive and practice hands-on exercises for every feature?
+👉 **Open [`TUTORIAL.md`](TUTORIAL.md) for the complete self-paced training guide.**
 
 ---
 
@@ -207,7 +324,8 @@ nvim --headless -c 'lua assert(pcall(require, "telescope")); assert(pcall(requir
 
 ```text
 dev-env/
-├── README.md                              # Overview, installation, walkthrough & cheatsheets
+├── README.md                              # Overview, detailed installation guide & cheatsheets
+├── TUTORIAL.md                            # Complete training guide & exercises for the new toolset
 ├── WALKTHROUGH.md                         # Step-by-step tour & verification checklist
 ├── ARCHITECTURE.md                        # Deep technical architecture & IPC details
 ├── LICENSE                                # Apache License, Version 2.0

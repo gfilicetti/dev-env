@@ -7,7 +7,8 @@ This walkthrough guides you through what **Gino's Super Dev Env** installs, how 
 ## 1. What Gets Installed & Configured
 
 ### A. Repository Files (`~/Repositories/dev-env`)
-- **[`README.md`](README.md)**: Complete guide for **Gino's Super Dev Env**, including installation instructions, installer flags, step-by-step walkthrough, and keyboard cheatsheets for `screen` ➔ `tmux`, `vi` ➔ `nvim 0.12`, `agy` integration, and Bash 5.3 + Starship + `fzf`.
+- **[`README.md`](README.md)**: Complete guide for **Gino's Super Dev Env**, including detailed macOS & Linux installation instructions, installer flags, step-by-step walkthrough, and keyboard cheatsheets for `screen` ➔ `tmux`, `vi` ➔ `nvim 0.12`, `agy` integration, and Bash 5+ + Starship + `fzf`.
+- **[`TUTORIAL.md`](TUTORIAL.md)**: Comprehensive self-paced training guide taking new users through every installed program (`bash 5+`, `starship`, `fzf`, `rg`, `fd`, `tmux`, `nvim 0.12+`, `ade`/`agy`, and `dev-copy`), why each feature boosts productivity, and hands-on exercises.
 - **[`ARCHITECTURE.md`](ARCHITECTURE.md)**: Deep technical architecture documentation explaining terminal escape sequences, DECSCUSR cursor-shape passthrough, Readline zero-width prompt escapes (`\1...\2`), `tmux` TTY process inspection (`is_vim`), and Neovim's `agy` auto-reload & `send-keys` bridge.
 - **[`install.sh`](install.sh)**: Turnkey macOS & Linux setup wizard supporting `./install.sh`, `./install.sh --defaults`, `./install.sh --dry-run`, and `./install.sh --uninstall` (instant rollback from `~/.dev-env-backup/<timestamp>`).
 - **[`bin/ade`](bin/ade)**: Workspace launcher script (also aliased to `tdev`) that starts or attaches to a per-repo `tmux` session with Neovim (left 62%), Antigravity CLI `agy` (right 38%, with automatic fallback to an interactive Bash shell if `agy` is not installed yet), and a secondary Bash shell window.
