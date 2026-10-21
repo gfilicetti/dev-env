@@ -11,7 +11,7 @@ By participating in this project, you agree to abide by our [Code of Conduct](CO
 ### 1. Secret & Personal Data Scrubbing (Critical)
 Because this repository contains shell, editor, and agent templates, **never commit personal credentials, usernames, or private project names**.
 Before submitting a pull request, verify that:
-- All personal paths use `$HOME` or `~` instead of `/Users/<username>`.
+- All personal paths use `$HOME` or `~` instead of hardcoded user home directories.
 - All tokens/API keys belong exclusively in untracked `~/.secrets` (documented in `templates/bash/secrets.example`).
 - User-configurable settings use template placeholders (`{{GCP_PROJECT}}`, `{{GCP_LOCATION}}`, `{{WORKSPACE_DIR}}`, `{{MULTIPLEXER_PROMPT}}`) rendered by `install.sh`.
 

@@ -8,17 +8,17 @@ This document explains how the components of **Gino's Super Dev Env (`dev-env`)*
 
 ```mermaid
 flowchart TB
-    subgraph terminal["iTerm2 (SauceCodeProNF-SemiBold 14 | Native Mouse Selection)"]
-        subgraph tmux["tmux 3.7+ Server (Prefix: Ctrl-a | focus-events: on | escape-time: 10ms)"]
+    subgraph terminal["Terminal Emulator (SauceCodePro Nerd Font | Native Mouse Selection | OSC 52)"]
+        subgraph tmux["tmux 3.x+ Server (Prefix: Ctrl-a | focus-events: on | escape-time: 10ms)"]
             subgraph win0["Window 0: 'code' (Created by ~/bin/ade)"]
-                nvim["Left Pane (62%): Neovim 0.12\n~/.config/nvim/init.lua"]
+                nvim["Left Pane (62%): Neovim 0.12+\n~/.config/nvim/init.lua"]
                 agy_side["Right Pane (38%): Antigravity CLI\nagy (editor=nvim, editorMode=vim)"]
             end
             subgraph popup["Floating Popup (Ctrl-a g)"]
                 agy_pop["Attached Session: agy-<repo>\n85% x 85% Overlay"]
             end
-            subgraph win1["Window 1: 'shell' (Bash 5.3)"]
-                bash["/usr/local/bin/bash\n~/.bashrc + ~/.inputrc + starship.toml + fzf"]
+            subgraph win1["Window 1: 'shell' (Modern Bash 5+)"]
+                bash["Bash 5+ (/opt/homebrew | /usr/local | /bin/bash)\n~/.bashrc + ~/.inputrc + starship.toml + fzf"]
             end
         end
     end

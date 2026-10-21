@@ -22,11 +22,12 @@ This walkthrough guides you through what **Gino's Super Dev Env** installs, how 
 
 ### B. Live Environment Deployed (`~/`)
 - **Prebuilt Binaries & Nerd Font Installed**:
-  - `starship` (`/usr/local/bin/starship`) — Two-line Rust-powered prompt
-  - `fzf` (`/usr/local/bin/fzf`) — Interactive fuzzy finder for command history (`Ctrl-R`) and files (`Ctrl-T`)
-  - `ripgrep` (`/usr/local/bin/rg`) — Fast regex search engine for Neovim Telescope & CLI
-  - `fd` (`/usr/local/bin/fd`) — Fast file finder for Neovim Telescope & CLI
-  - `SauceCodePro Nerd Font` (`~/Library/Fonts/SauceCodeProNerdFont-*.ttf`), with iTerm2 profile font updated to `SauceCodeProNF-SemiBold 14`
+  - `nvim` (`~/.local/nvim/bin/nvim` linked in `~/bin/nvim`) — Official prebuilt Neovim 0.12+ release
+  - `starship` (`~/bin/starship` or `/usr/local/bin/starship`) — Two-line Rust-powered prompt
+  - `fzf` (`~/bin/fzf` or `/usr/local/bin/fzf`) — Interactive fuzzy finder for command history (`Ctrl-R`) and files (`Ctrl-T`)
+  - `ripgrep` (`~/bin/rg` or `/usr/local/bin/rg`) — Fast regex search engine for Neovim Telescope & CLI
+  - `fd` (`~/bin/fd` or `/usr/local/bin/fd`) — Fast file finder for Neovim Telescope & CLI
+  - `SauceCodePro Nerd Font` (`~/Library/Fonts` on macOS or `~/.local/share/fonts` on Linux)
 - **Secrets Isolated**:
   - Private tokens (such as `HOMEBREW_GITHUB_API_TOKEN`) are isolated in `~/.secrets` with `chmod 600` permissions and never tracked in Git.
 - **Dotfiles Backed Up & Installed**:

@@ -79,14 +79,14 @@ Why do experienced terminal developers use a **two-line prompt** instead of a tr
 Here is how to read **Line 1** of your Starship prompt:
 
 ```text
-cumulatimer/src on  main [!2 +1 ?1 ⇡1] via 🐍 v3.12.4 (venv) took 4s
+dev-env/templates on  main [!2 +1 ?1 ⇡1] via 🐍 v3.12.4 (venv) took 4s
 [I] ❯ _
 ```
 
 | Segment | Example | Meaning & Why It Helps |
 | :--- | :--- | :--- |
-| **SSH User@Host** | `gino@prod-db in ` | **Hidden on your local machine** (zero noise!), but automatically lights up in bold yellow the moment you `ssh` into a remote server so you never run a destructive command on the wrong box. |
-| **Smart Directory** | `dev-env/templates` | Automatically truncates parent folders (`/Users/you/Repositories/...`) to the **Git repository root** so you always know which repo and subfolder you are in. |
+| **SSH User@Host** | `user@remote-host in ` | **Hidden on your local machine** (zero noise!), but automatically lights up in bold yellow the moment you `ssh` into a remote server so you never run a destructive command on the wrong box. |
+| **Smart Directory** | `dev-env/templates` | Automatically truncates parent folders (`~/Repositories/...`) to the **Git repository root** so you always know which repo and subfolder you are in. |
 | **Git Branch** | `on  main` | Shows your current branch or detached commit hash. |
 | **Git Status** | `[!2 +1 ?1 ⇡1⇣2]` | Instant `git status` without typing a key: `!2` = 2 modified unstaged files, `+1` = 1 staged file, `?1` = 1 untracked file, `⇡1` = 1 commit ahead of `origin`, `⇣2` = 2 commits behind `origin`, `$1` = 1 stashed change. |
 | **Language / Runtime**| `via 🐍 v3.12 (venv)` | **Context-aware**: Only appears when your current directory contains a project file (`pyproject.toml`, `package.json`, `go.mod`, `Cargo.toml`, `pom.xml`, etc.). Shows active Python virtualenv, Node, Go, Rust, or Java version. |

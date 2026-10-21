@@ -16,10 +16,10 @@ Every change made to this repository MUST be reflected in both:
 - When modifying shell or `tmux` configurations, never hardcode macOS-only utilities (such as `pbcopy`, `open`, or `/usr/local/bin/bash`) without cross-platform Linux/SSH fallbacks (such as `~/bin/dev-copy` or `xdg-open`).
 
 ## 3. Secret Scrubbing & Apache 2.0 Open-Source Standards
-- **Never** commit personal tokens (`ghp_...`), hardcoded personal home paths (`/Users/gfilicetti`), or private GCP project IDs (`gf-ag-main`) into tracked files.
-- Verify scrubbing before committing:
+- **Never** commit personal tokens (`ghp_...`), hardcoded personal home directory paths, private repository names, or private GCP project IDs into tracked files. Always use `$HOME` or `~` and template placeholders (`{{GCP_PROJECT}}`).
+- Verify scrubbing across all tracked files before committing:
   ```bash
-  ! grep -rnE "ghp_|/Users/gfilicetti|gf-ag-main" templates/ bin/ install.sh
+  ! git grep -iE "ghp_[A-Za-z0-9_]+|/(Users|home)/[A-Za-z0-9._-]+/"
   ```
 - All new executable scripts must include the Apache 2.0 SPDX header:
   ```bash

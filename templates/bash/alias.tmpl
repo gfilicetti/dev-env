@@ -52,8 +52,8 @@ alias gmm="git merge master"
 
 # --- System & Maintenance Shortcuts (OS-Aware: macOS & Linux) ----------------
 if [[ "$(uname -s)" == "Darwin" ]]; then
-    # Customize backup script path in ~/.bashrc.local if needed:
-    alias rback='sudo cat /dev/null && osascript "$HOME/applescript/rsync.applescript"'
+    # Example custom backup alias (uncomment or place in ~/.bashrc.local):
+    # alias rback='sudo cat /dev/null && osascript "$HOME/applescript/rsync.applescript"'
     alias update="sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup; brew doctor"
 else
     if command -v apt-get >/dev/null 2>&1; then
