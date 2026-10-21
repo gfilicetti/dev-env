@@ -20,7 +20,11 @@ alias cz="unzip -l"                    # List zip archive contents
 alias m="less"
 alias md="mkdir"
 alias rd="rmdir"
-alias l="ls -Flh"
+if ls --color=auto >/dev/null 2>&1; then
+    alias l="ls -Flh --color=auto"
+else
+    alias l="ls -Flh -G"
+fi
 alias nc="netcat"
 alias macvim="mvim"
 alias whatsmyip="curl -s 'https://api.ipify.org?format=json' | jq -r .ip"
@@ -29,6 +33,7 @@ alias pip="pip3"
 
 # --- Antigravity Dev Environment Shortcuts -----------------------------------
 alias tdev="ade"                       # Launch tmux + nvim + agy IDE layout
+alias clip="dev-copy"                  # Universal clipboard helper (macOS/Linux/SSH OSC52)
 
 # --- Cloud & Kubernetes Shortcuts --------------------------------------------
 alias gc="gcloud"
@@ -45,17 +50,41 @@ alias gf="git fetch --prune"
 alias gs="git status"
 alias gmm="git merge master"
 
-# --- System & Maintenance Shortcuts ------------------------------------------
-# Customize backup script path in ~/.bashrc.local if needed:
-alias rback='sudo cat /dev/null && osascript "$HOME/applescript/rsync.applescript"'
+# --- System & Maintenance Shortcuts (OS-Aware: macOS & Linux) ----------------
+if [[ "$(uname -s)" == "Darwin" ]]; then
+    # Customize backup script path in ~/.bashrc.local if needed:
+    alias rback='sudo cat /dev/null && osascript "$HOME/applescript/rsync.applescript"'
+    alias update="sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup; brew doctor"
+else
+    if command -v apt-get >/dev/null 2>&1; then
+        alias update="sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get autoremove -y"
+    elif command -v dnf >/dev/null 2>&1; then
+        alias update="sudo dnf upgrade --refresh -y"
+    elif command -v pacman >/dev/null 2>&1; then
+        alias update="sudo pacman -Syu"
+    elif command -v apk >/dev/null 2>&1; then
+        alias update="sudo apk update && sudo apk upgrade"
+    fi
+fi
 alias gn="geeknote"
-alias update="sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup; brew doctor"
 
 # --- Helper Functions --------------------------------------------------------
 
-# Open passed-in directory in Path Finder (macOS)
+# Open passed-in directory in file manager (Path Finder/Finder on macOS, xdg-open on Linux)
 pf() {
-    open -a "Path Finder.app" "$1"
+    local target="${1:-.}"
+    if [[ "$(uname -s)" == "Darwin" ]]; then
+        if [ -d "/Applications/Path Finder.app" ]; then
+            open -a "Path Finder.app" "$target"
+        else
+            open "$target"
+        fi
+    elif command -v xdg-open >/dev/null 2>&1; then
+        xdg-open "$target" >/dev/null 2>&1 &
+    else
+        echo "No graphical file manager found for: $target" >&2
+        return 1
+    fi
 }
 
 # Spell-check word(s) using aspell

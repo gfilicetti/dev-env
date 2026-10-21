@@ -5,6 +5,20 @@ All notable changes to **Gino's Super Dev Env (`dev-env`)** will be documented i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-10-20
+
+### Added
+- **Turnkey Cross-Platform Bootstrapper (`install.sh` for macOS & Linux)**:
+  - Full OS (`Darwin` / `Linux`) and CPU architecture (`x86_64` / `arm64` / `aarch64`) detection.
+  - **Hybrid Linux Privilege Model**: Uses `sudo` with `apt-get`, `dnf`, `yum`, `pacman`, or `apk` when available for core packages, and automatically falls back to rootless `~/.local/bin` & `~/.local` user-space installation when `sudo` is unavailable.
+  - **Fresh Mac Bootstrap**: Offers to auto-install Homebrew if missing, installs modern `bash` 5.x & `tmux`, silences macOS's `zsh` deprecation warning (`BASH_SILENCE_DEPRECATION_WARNING=1`), and offers to switch the login shell to `bash` via `chsh`.
+  - **Official Prebuilt Neovim 0.12+ Installer**: Automatically downloads and installs official prebuilt Neovim 0.12+ tarballs (`nvim-macos-*` / `nvim-linux-*`) to `~/.local/nvim` whenever `nvim` is missing or older than `0.10`.
+  - **Linux Fontconfig Integration**: Installs `SauceCodePro Nerd Font` to `~/.local/share/fonts` on Linux and refreshes the font cache via `fc-cache -f`.
+- **Universal Clipboard Engine (`bin/dev-copy`)**:
+  - Added `bin/dev-copy` (and `clip` alias) supporting macOS (`pbcopy`), Linux Wayland (`wl-copy`), Linux X11 (`xclip` / `xsel`), and remote SSH / headless Linux via ANSI OSC 52 escape sequences (`\033]52;c;<base64>\a` with `tmux` DCS passthrough).
+- **Smart Antigravity CLI (`agy`) Fallback**:
+  - `bin/ade` and `tmux.conf` (`Ctrl-a g` / `Ctrl-a G`) now gracefully fall back to an interactive login shell if `agy` is not yet installed on `PATH` on a brand-new machine.
+
 ## [1.0.0] - 2026-10-20
 
 ### Added

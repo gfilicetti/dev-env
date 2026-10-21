@@ -2,7 +2,9 @@
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
-A fast, keyboard-driven command-line development environment for macOS that pairs **Bash 5.3 + Starship + `fzf`**, **`tmux` 3.7+**, **Neovim 0.12+**, and **Antigravity CLI (`agy`)** while honoring decades of classic **`vi`** and **GNU `screen`** muscle memory.
+A fast, keyboard-driven command-line development environment for **macOS** (`arm64` & `x86_64`) and **Linux** (`x86_64` & `arm64`/`aarch64`) that pairs **Bash 5+ + Starship + `fzf`**, **`tmux` 3.x+**, **Neovim 0.12+**, and **Antigravity CLI (`agy`)** while honoring decades of classic **`vi`** and **GNU `screen`** muscle memory.
+
+Clone this repository onto any brand-new Mac or Linux computer and run `./install.sh` to bootstrap the entire stack in under a minute.
 
 > 📖 **Documentation Map**:
 > - **[`README.md`](README.md)** *(this file)* — Installation, hands-on walkthrough, and keyboard shortcut cheatsheets.
@@ -16,13 +18,22 @@ A fast, keyboard-driven command-line development environment for macOS that pair
 | Layer | Tooling | Highlights |
 | :--- | :--- | :--- |
 | **Shell & Prompt** | **Bash 5.3** + **Starship** + **Readline** + **`fzf`** | Two-line developer prompt with **SauceCodePro Nerd Font** icons, smart Git-root truncation, Git dirty/staged/ahead-behind badges, active runtime/venv versions, slow-command timer (`>2s`), SSH-only `user@host`, live `[I]`/`[N]` `vi`-mode badge with beam/block cursor switching, and `Ctrl-R` fuzzy history search. |
-| **Multiplexer** | **`tmux` 3.7+** (plus classic `.screenrc`) | Uses `Ctrl-a` prefix just like GNU `screen`, `100,000` line scrollback, `K` to kill, `Escape` for `vi` copy-mode (yanks straight to macOS `pbcopy`), bottom `[ host ][ windows ][ loadavg ][ date time ]` bar, seamless `Ctrl-h/j/k/l` navigation with Neovim, and `Ctrl-a g` floating popup for `agy`. |
-| **Editor** | **Neovim 0.12+** (plus classic `.vimrc`) | Single-file `~/.config/nvim/init.lua` preserving classic `.vimrc` preferences (`4`-space tabs, `mouse=""` disabled for clean iTerm2 copy/paste, cursor restore, `:DiffOrig`) + persistent undo, live `:%s` preview, Treesitter, Telescope (`<Space>ff`, `<Space>fg`), Gitsigns, Oil (`-`), and real-time `agy` buffer auto-reload. |
-| **AI Agent Bridge** | **Antigravity CLI (`agy`)** + **`ade`** | Launch a full side-by-side `nvim` + `agy` workspace with `ade` (or `tdev`), summon a floating `agy` popup with `Ctrl-a g`, and send `@file` or `@file#L10-L25` selections straight from Neovim to `agy` with `<Space>af` and `<Space>as`. |
+| **Multiplexer** | **`tmux` 3.x+** (plus classic `.screenrc`) | Uses `Ctrl-a` prefix just like GNU `screen`, `100,000` line scrollback, `K` to kill, `Escape` for `vi` copy-mode (yanks via universal `bin/dev-copy` to macOS `pbcopy`, Linux `wl-copy`/`xclip`, and SSH OSC 52), bottom `[ host ][ windows ][ loadavg ][ date time ]` bar, seamless `Ctrl-h/j/k/l` navigation with Neovim, and `Ctrl-a g` floating popup for `agy`. |
+| **Editor** | **Neovim 0.12+** (plus classic `.vimrc`) | Single-file `~/.config/nvim/init.lua` preserving classic `.vimrc` preferences (`4`-space tabs, `mouse=""` disabled for clean terminal copy/paste, cursor restore, `:DiffOrig`) + persistent undo, live `:%s` preview, Treesitter, Telescope (`<Space>ff`, `<Space>fg`), Gitsigns, Oil (`-`), and real-time `agy` buffer auto-reload. |
+| **AI Agent Bridge** | **Antigravity CLI (`agy`)** + **`ade`** | Launch a full side-by-side `nvim` + `agy` workspace with `ade` (or `tdev`), summon a floating `agy` popup with `Ctrl-a g`, and send `@file` or `@file#L10-L25` selections straight from Neovim to `agy` with `<Space>af` and `<Space>as` (with smart shell fallback if `agy` is not yet installed). |
 
 ---
 
-## 🚀 Quick Start & Installation
+## 🖥️ Supported Platforms
+
+| OS | Architectures | Package & Binary Strategy |
+| :--- | :--- | :--- |
+| **macOS** | Apple Silicon (`arm64`) & Intel (`x86_64`) | Auto-installs Homebrew (if missing) for `bash` 5.x & `tmux`, plus fast prebuilt release binaries for `neovim` 0.12+, `starship`, `fzf`, `rg`, `fd`, and `SauceCodePro Nerd Font` (`~/Library/Fonts`). |
+| **Linux** | `x86_64` (`amd64`) & `arm64` (`aarch64`) | **Hybrid Privilege Model**: Uses `sudo` with `apt-get`, `dnf`, `yum`, `pacman`, or `apk` when available for core packages (`bash`, `tmux`, `git`, `curl`, `jq`, `fontconfig`, `xclip`), and automatically falls back to rootless `~/.local/bin` / `~/.local` prebuilt binaries (`neovim` 0.12+, `starship`, `fzf`, `rg`, `fd`, and `~/.local/share/fonts`). |
+
+---
+
+## 🚀 Quick Start & Installation (New Computer Bootstrap)
 
 ### 1. Clone the Repository
 
@@ -38,11 +49,11 @@ cd ~/Repositories/dev-env
 ```
 
 The interactive wizard will:
-1. Install prebuilt macOS binaries for **`starship`**, **`fzf`**, **`ripgrep` (`rg`)**, **`fd`**, and **`SauceCodePro Nerd Font`** (`~/Library/Fonts`).
-2. Prompt for your **Antigravity GCP Project ID**, **Primary Workspace Directory**, **Optional GitHub Token** (saved strictly to untracked `~/.secrets` with `chmod 600`), and **Login Multiplexer Preference** (`tmux`, `screen`, or `none`).
-3. Back up all existing dotfiles to `~/.dev-env-backup/<YYYYMMDD-HHMMSS>/`.
-4. Render the scrubbed templates from `templates/` into `~` and `~/.config/`.
-5. Configure iTerm2's profile font to `SauceCodeProNF-SemiBold 14` and bootstrap Neovim's plugins headlessly.
+1. Detect your OS (`macos` or `linux`), CPU architecture (`x86_64` or `arm64`), and package manager (`brew`, `apt`, `dnf`, `yum`, `pacman`, `apk`, or rootless `~/.local` fallback).
+2. Install/verify **Bash 5+**, **`tmux`**, **Neovim 0.12+**, **`starship`**, **`fzf`**, **`ripgrep` (`rg`)**, **`fd`**, and **`SauceCodePro Nerd Font`** (`~/Library/Fonts` on macOS or `~/.local/share/fonts` on Linux).
+3. Prompt for your **Antigravity GCP Project ID**, **Primary Workspace Directory**, **Optional GitHub Token** (saved strictly to untracked `~/.secrets` with `chmod 600`), and **Login Multiplexer Preference** (`tmux`, `screen`, or `none`).
+4. Back up all existing dotfiles to `~/.dev-env-backup/<YYYYMMDD-HHMMSS>/`.
+5. Render the scrubbed templates from `templates/` into `~` and `~/.config/`, install `~/bin/ade` and `~/bin/dev-copy`, offer to switch your default login shell to `bash` via `chsh` if needed, and bootstrap Neovim's plugins headlessly.
 
 ### Installer Flags
 
@@ -108,7 +119,7 @@ This creates (or reattaches to) a `tmux` session named `dev-<repo-name>` with tw
 | **Cycle panes** | `Ctrl-a Ctrl-s` or `Tab` | Matches your classic `.tmux.conf` |
 | **Resize pane** | `Ctrl-a H / J / K / L` | Repeatable 5-cell resize |
 | **Zoom / unzoom current pane** | `Ctrl-a z` | Toggle full-screen on either `nvim` or `agy` |
-| **Enter `vi` copy mode** | `Ctrl-a Esc` or `Ctrl-a [` | `v` starts selection, `y` or `Enter` copies to macOS `pbcopy` |
+| **Enter `vi` copy mode** | `Ctrl-a Esc` or `Ctrl-a [` | `v` starts selection, `y` or `Enter` copies via `~/bin/dev-copy` (macOS/Linux/SSH OSC 52) |
 | **Detach session** | `Ctrl-a d` | Reattach with `tmux attach` or `ade` |
 | **Reload `~/.tmux.conf`** | `Ctrl-a r` | Live reload without restarting `tmux` |
 
@@ -175,15 +186,18 @@ Run these checks anytime to confirm all tools and configurations are healthy:
 
 ```bash
 # 1. Verify CLI binaries
-starship --version && fzf --version && rg --version && fd --version
+starship --version && fzf --version && rg --version && fd --version && nvim --version | head -n 1
 
-# 2. Verify ~/.secrets permissions (must be 600)
-stat -f '%Lp' ~/.secrets
+# 2. Verify ~/.secrets permissions (must be 600 on both macOS and Linux)
+(stat -f '%Lp' ~/.secrets 2>/dev/null || stat -c '%a' ~/.secrets)
 
-# 3. Verify tmux 3.7+ configuration syntax
+# 3. Verify universal clipboard helper (bin/dev-copy)
+echo "dev-env-ok" | ~/bin/dev-copy
+
+# 4. Verify tmux configuration syntax
 tmux -L test-dev-env -f ~/.tmux.conf new-session -d -s test_sess \; kill-server
 
-# 4. Verify Neovim 0.12 & plugins load cleanly
+# 5. Verify Neovim 0.12+ & plugins load cleanly
 nvim --headless -c 'lua assert(pcall(require, "telescope")); assert(pcall(require, "gitsigns")); assert(pcall(require, "oil")); print("OK")' -c 'qa'
 ```
 
@@ -202,9 +216,10 @@ dev-env/
 ├── CODE_OF_CONDUCT.md                     # Contributor Covenant Code of Conduct
 ├── SECURITY.md                            # Security policy & secret isolation design
 ├── CHANGELOG.md                           # Release history
-├── install.sh                             # Interactive installer, backup & template renderer
+├── install.sh                             # Turnkey macOS & Linux installer, backup & template renderer
 ├── bin/
-│   └── ade                                # Antigravity Dev Environment tmux workspace launcher
+│   ├── ade                                # Antigravity Dev Environment tmux workspace launcher
+│   └── dev-copy                           # Universal clipboard helper (pbcopy, wl-copy, xclip, OSC 52)
 └── templates/
     ├── bash/
     │   ├── bash_profile.tmpl              # Login shell config (loads ~/.bashrc, ~/.alias, ~/.secrets)

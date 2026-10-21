@@ -5,15 +5,20 @@
 # Configures Neovim as default editor, 100k deduplicated history, fzf, & Starship.
 # =============================================================================
 
-# 1. Source system-wide definitions
+# 1. Source system-wide definitions (RHEL/macOS /etc/bashrc or Debian/Ubuntu /etc/bash.bashrc)
 if [ -f /etc/bashrc ]; then
     . /etc/bashrc
+elif [ -f /etc/bash.bashrc ]; then
+    . /etc/bash.bashrc
 fi
 
-# 2. Default Editor (Neovim) & User PATH
+# Silence macOS bash deprecation notice in non-login interactive shells too
+export BASH_SILENCE_DEPRECATION_WARNING=1
+
+# 2. Default Editor (Neovim) & User PATH (macOS + Linux ~/.local/bin)
 export EDITOR=nvim
 export VISUAL=nvim
-export PATH="$HOME/bin:/usr/local/bin:$PATH"
+export PATH="$HOME/bin:$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
 
 # 3. Load command aliases & functions if not already loaded
 if [ -f "$HOME/.alias" ]; then

@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+# Copyright 2026 The Gino's Super Dev Env Authors
+# SPDX-License-Identifier: Apache-2.0
+# =============================================================================
+# dev-copy — Universal Clipboard Helper (macOS, Linux Wayland/X11, & SSH OSC 52)
+# =============================================================================
+# Reads from stdin (or arguments) and copies to the system clipboard:
+#   1. macOS: pbcopy
+#   2. Linux Wayland: wl-copy
+#   3. Linux X11: xclip or xsel
+#   4. SSH / Headless Linux fallback: ANSI OSC 52 escape sequence (copies
+#      straight through tmux/SSH to your local iTerm2 / terminal clipboard)
+# =============================================================================
+
+set -euo pipefail
+
+if [[ $# -gt 0 ]]; then
+    buf="$*"
+else
+    buf="$(cat)"
+fi
+
+copied_native=false
+
+# 1. macOS native clipboard
+if command -v pbcopy >/dev/null 2>&1; then
+    printf "%s" "$buf" | pbcopy
+    copied_native=true
+# 2. Linux Wayland clipboard
+elif [[ -n "${WAYLAND_DISPLAY:-}" ]] && command -v wl-copy >/dev/null 2>&1; then
+    printf "%s" "$buf" | wl-copy
+    copied_native=true
+# 3. Linux X11 clipboard (xclip / xsel)
+elif [[ -n "${DISPLAY:-}" ]] && command -v xclip >/dev/null 2>&1; then
+    printf "%s" "$buf" | xclip -selection clipboard -in
+    copied_native=true
+elif [[ -n "${DISPLAY:-}" ]] && command -v xsel >/dev/null 2>&1; then
+    printf "%s" "$buf" | xsel --clipboard --input
+    copied_native=true
+fi
+
+# 4. Always emit OSC 52 if over SSH or if no local GUI clipboard was available
+if [[ -n "${SSH_TTY:-}" || -n "${SSH_CONNECTION:-}" || "$copied_native" == "false" ]]; then
+    b64="$(printf "%s" "$buf" | base64 | tr -d '\r\n')"
+    if [[ -n "${TMUX:-}" ]]; then
+        # Wrap OSC 52 for tmux passthrough to outer terminal
+        pane_tty="$(tmux display-message -p '#{client_tty}' 2>/dev/null || true)"
+        if [[ -n "$pane_tty" && -w "$pane_tty" ]]; then
+            printf "\033]52;c;%s\a" "$b64" > "$pane_tty"
+        else
+            printf "\033Ptmux;\033\033]52;c;%s\a\033\\" "$b64"
+        fi
+    else
+        printf "\033]52;c;%s\a" "$b64"
+    fi
+fi

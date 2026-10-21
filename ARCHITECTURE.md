@@ -32,15 +32,16 @@ flowchart TB
 
 ## 2. Terminal & Multiplexer Layer (`templates/tmux/tmux.conf`)
 
-### 2.1 Migrating from `tmux 1.x` / GNU `screen` to `tmux 3.7+`
+### 2.1 Migrating from `tmux 1.x` / GNU `screen` to `tmux 3.x+` (macOS & Linux)
 Older `tmux` configurations used options removed in `tmux 2.1+` and `3.x`:
-- `setw -g mode-mouse on` was replaced by `set -g mouse on|off`. Because native iTerm2 text selection without holding `Option` is preferred (matching `.vimrc`'s disabled mouse), we explicitly set `set -g mouse off` and use `Ctrl-a Esc` for keyboard-driven `vi` copy-mode wired directly to macOS `pbcopy`.
+- `setw -g mode-mouse on` was replaced by `set -g mouse on|off`. Because native terminal text selection without holding `Option`/`Shift` is preferred (matching `.vimrc`'s disabled mouse), we explicitly set `set -g mouse off` and use `Ctrl-a Esc` for keyboard-driven `vi` copy-mode wired directly to `~/bin/dev-copy` (which handles macOS `pbcopy`, Linux Wayland `wl-copy`, Linux X11 `xclip`/`xsel`, and headless SSH via ANSI OSC 52 escape sequences alongside `set -s set-clipboard on`).
 - `setw -g window-status-current-bg red` was replaced by unified style syntax: `setw -g window-status-current-style bg=red,fg=white,bold`.
-- Linux's `/proc/loadavg` does not exist on macOS Darwin kernels. The status bar now uses:
+- Linux's `/proc/loadavg` does not exist on macOS Darwin kernels. The status bar uses:
   ```sh
   sysctl -n vm.loadavg 2>/dev/null | awk '{print $2,$3,$4}' || cut -d " " -f 1-3 /proc/loadavg 2>/dev/null
   ```
   so the `[ host ][ windows ][ loadavg ][ YYYY-MM-DD HH:MM:SS ]` status bar works identically on both macOS and Linux.
+- Cross-platform shell resolution cascades from `/bin/bash` (Linux) to `/usr/local/bin/bash` (Intel Mac Homebrew) and `/opt/homebrew/bin/bash` (Apple Silicon Mac Homebrew).
 
 ### 2.2 Escape Time, Focus Events, and Cursor Shape Passthrough
 Three low-level terminal settings in `tmux.conf` are essential for Neovim and Bash `vi`-mode:
