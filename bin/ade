@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Copyright 2026 The Gino's Super Dev Env Authors
+# SPDX-License-Identifier: Apache-2.0
 # =============================================================================
 # ade — Antigravity Dev Environment Launcher (Part of Gino's Super Dev Env)
 # =============================================================================
@@ -24,7 +26,7 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         -h|--help)
-            sed -n '2,13p' "$0" | sed 's/^# \{0,1\}//'
+            sed -n '4,15p' "$0" | sed 's/^# \{0,1\}//'
             exit 0
             ;;
         *)

@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Copyright 2026 The Gino's Super Dev Env Authors
+# SPDX-License-Identifier: Apache-2.0
 # =============================================================================
 # install.sh — Gino's Super Dev Env Interactive Installer
 # =============================================================================
@@ -34,7 +36,7 @@ warn()  { printf "${YELLOW}[WARN]${RESET} %s\n" "$*"; }
 err()   { printf "${RED}[ERR ]${RESET} %s\n" "$*" >&2; }
 
 usage() {
-    sed -n '2,10p' "$0" | sed 's/^# \{0,1\}//'
+    sed -n '4,12p' "$0" | sed 's/^# \{0,1\}//'
     exit 0
 }
 

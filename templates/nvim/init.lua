@@ -1,3 +1,5 @@
+-- Copyright 2026 The Gino's Super Dev Env Authors
+-- SPDX-License-Identifier: Apache-2.0
 -- =============================================================================
 -- ~/.config/nvim/init.lua — Gino's Super Dev Env (Neovim 0.12+)
 -- =============================================================================

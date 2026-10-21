@@ -1,5 +1,7 @@
 # Gino's Super Dev Env (`dev-env`)
 
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+
 A fast, keyboard-driven command-line development environment for macOS that pairs **Bash 5.3 + Starship + `fzf`**, **`tmux` 3.7+**, **Neovim 0.12+**, and **Antigravity CLI (`agy`)** while honoring decades of classic **`vi`** and **GNU `screen`** muscle memory.
 
 > 📖 **Documentation Map**:
@@ -194,6 +196,12 @@ dev-env/
 ├── README.md                              # Overview, installation, walkthrough & cheatsheets
 ├── WALKTHROUGH.md                         # Step-by-step tour & verification checklist
 ├── ARCHITECTURE.md                        # Deep technical architecture & IPC details
+├── LICENSE                                # Apache License, Version 2.0
+├── NOTICE                                 # Copyright & third-party attribution notices
+├── CONTRIBUTING.md                        # Contribution & verification guidelines
+├── CODE_OF_CONDUCT.md                     # Contributor Covenant Code of Conduct
+├── SECURITY.md                            # Security policy & secret isolation design
+├── CHANGELOG.md                           # Release history
 ├── install.sh                             # Interactive installer, backup & template renderer
 ├── bin/
 │   └── ade                                # Antigravity Dev Environment tmux workspace launcher
@@ -216,3 +224,18 @@ dev-env/
     └── antigravity/
         └── settings.json.tmpl             # Scrubbed Antigravity CLI configuration template
 ```
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) and our [Code of Conduct](CODE_OF_CONDUCT.md) before submitting a pull request.
+
+---
+
+## 📄 License
+
+Copyright 2026 The Gino's Super Dev Env Authors.
+
+Licensed under the **Apache License, Version 2.0** (the "License"); you may not use this project except in compliance with the License. See [LICENSE](LICENSE) and [NOTICE](NOTICE) for full details.
+
